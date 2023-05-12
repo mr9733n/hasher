@@ -45,6 +45,5 @@ Contributions are welcome! If you have any ideas, suggestions, or bug reports, p
 
 Please note that this program is provided for educational and informational purposes only. It is your responsibility to ensure the proper usage and legality of encryption in your jurisdiction. The authors of this program are not liable for any misuse or illegal activities conducted using this program.
 
-## Contact
 
-For any inquiries or questions, please contact [email protected]
+
