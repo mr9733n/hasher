@@ -1,5 +1,6 @@
 import getpass
 import os
+import sys
 import uuid
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
@@ -88,19 +89,18 @@ def save_encrypted_data_to_file(encrypted, filename):
         file.write(encrypted)
 
 def encrypt_data(private_key):
-    string_to_encrypt = input("Enter the string to encrypt: ")
+    print("Enter the string to encrypt (press Ctrl+Z and then Enter to end): ")
+    string_to_encrypt = sys.stdin.read().rstrip("\n")
     encrypted_data, encrypted_symmetric_key, iv = encrypt(string_to_encrypt, private_key)
-    symmetric_key_hex = encrypted_symmetric_key.hex()
-    print("Symmetric Key (Hex):", symmetric_key_hex)
+    # symmetric_key_hex = encrypted_symmetric_key.hex()
+    # print("Symmetric Key (Hex): ", symmetric_key_hex)
     iv_hex = iv.hex()
-    print("Initialization Vector (IV):", iv_hex)
+    print("Initialization Vector (IV): ", iv_hex)
     filename = get_random_filename()
     save_encrypted_data_to_file(encrypted_data, "encrypted_" + filename)
-    filename = filename.strip()
-    print("Encrypted data saved to", "encrypted_" + filename)
+    print("Encrypted data saved to: ", "encrypted_" + filename[:-4])
     save_encrypted_data_to_file(encrypted_symmetric_key, "key_" + filename)
-    filename = filename.strip()
-    print("Encrypted key saved to", "key_" + filename)
+    print("Encrypted key saved to: ", "key_" + filename[:-4])
 
 def decrypt_data(private_key):
     filename = input("Enter the file name for the encrypted data (without extension): ")
@@ -125,7 +125,7 @@ def decrypt_data(private_key):
 
 def encrypt_decrypt_main():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("Stongly Encrypt Yours Data")
+    print("Strongly Encrypt Your Data")
     # Check if the private key file exists
     if not os.path.exists(PRIVATE_KEY_FILE):
         print("Generate RSA key not found.")
@@ -146,29 +146,31 @@ def encrypt_decrypt_main():
             backend=default_backend()
         )
 
-    while True:
+    exit_flag = False  # Flag variable to control the loop
+
+    while not exit_flag:
         action = input("Choose an action: (1) Encrypt, (2) Decrypt, (Q) Quit: ")
         if action == "1":
             encrypt_data(private_key)
         elif action == "2":
             decrypt_data(private_key)
         elif action.lower() == "q":
-            #Clean up terminal output
+            # Clean up terminal output
             os.system('cls' if os.name == 'nt' else 'clear')
             print("Goodbye!")
-            break
+            exit_flag = True  # Set the flag to exit the loop
         else:
             print("Invalid choice. Please choose either '1' for encryption, '2' for decryption, or 'Q' to quit.")
 
 try:
     encrypt_decrypt_main()
 except NameError as e:
-    print("Name error occurred:", str(e))
+    print("Name error occurred: ", str(e))
 except ImportError as e:
-    print("Failed to import required module(s):", str(e))
+    print("Failed to import required module(s): ", str(e))
 except InvalidToken as e:
-    print("Invalid token:", str(e))
+    print("Invalid token: ", str(e))
 except FileNotFoundError as e:
-    print("File not found:", str(e))
+    print("File not found: ", str(e))
 except Exception as e:
-    print("An error occurred:", str(e))
+    print("An error occurred: ", str(e))
